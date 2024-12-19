@@ -1,8 +1,12 @@
 import { proxyUrl } from '../config/proxy';
 
 export async function generateCompetitorAnalysis(companyName, existingOutput = null, userFeedback = null) {
-  const apiUrl = `${import.meta.env.VITE_COMPETITOR_API_URL}/generate`;
+  // const apiUrl = `${import.meta.env.VITE_COMPETITOR_API_URL}/generate`;
+  // Using direct URL for now
+  const apiUrl = 'https://loyalty-competitor-analysis-production.up.railway.app/generate';
   const proxiedUrl = proxyUrl(apiUrl);
+
+  console.log('Making request to:', proxiedUrl);
 
   const response = await fetch(proxiedUrl, {
     method: 'POST',
