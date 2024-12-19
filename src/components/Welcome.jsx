@@ -24,7 +24,7 @@ export default function Welcome() {
         />
         <button 
           onClick={handleStart}
-          className="start-button"
+          className="primary-button"
           disabled={!inputCompanyName.trim()}
         >
           Start
