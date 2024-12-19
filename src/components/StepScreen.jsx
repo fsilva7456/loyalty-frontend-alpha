@@ -1,6 +1,7 @@
 import { useGlobal, STEPS } from '../context/GlobalContext';
 import ProgressBar from './ProgressBar';
 import CompetitorAnalysisStep from './steps/CompetitorAnalysisStep';
+import CustomerAnalysisStep from './steps/CustomerAnalysisStep';
 
 export default function StepScreen() {
   const { currentStep, nextStep, previousStep, companyName, resetProgress } = useGlobal();
@@ -10,6 +11,8 @@ export default function StepScreen() {
     switch (currentStep) {
       case 1:
         return <CompetitorAnalysisStep />;
+      case 2:
+        return <CustomerAnalysisStep />;
       default:
         return (
           <div className="step-placeholder">
