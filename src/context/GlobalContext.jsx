@@ -1,15 +1,16 @@
 import { createContext, useContext, useState } from 'react';
+import { StepKeys } from './types';
 
 const GlobalContext = createContext(undefined);
 
 export const STEPS = [
-  { id: 1, title: 'Competitor Analysis', key: 'competitor' },
-  { id: 2, title: 'Customer Analysis', key: 'customer' },
-  { id: 3, title: 'Loyalty & CRM Objectives', key: 'objectives' },
-  { id: 4, title: 'Loyalty Program Design', key: 'design' },
-  { id: 5, title: 'Financial Model', key: 'financial' },
-  { id: 6, title: 'Roadmap', key: 'roadmap' },
-  { id: 7, title: 'Business Case', key: 'business' },
+  { id: 1, title: 'Competitor Analysis', key: StepKeys.COMPETITOR },
+  { id: 2, title: 'Customer Analysis', key: StepKeys.CUSTOMER },
+  { id: 3, title: 'Loyalty & CRM Objectives', key: StepKeys.LOYALTY_CRM },
+  { id: 4, title: 'Loyalty Program Design', key: StepKeys.PROGRAM_DESIGN },
+  { id: 5, title: 'Financial Model', key: StepKeys.FINANCIAL },
+  { id: 6, title: 'Roadmap', key: StepKeys.ROADMAP },
+  { id: 7, title: 'Business Case', key: StepKeys.BUSINESS_CASE },
 ];
 
 export function GlobalProvider({ children }) {
@@ -35,15 +36,20 @@ export function GlobalProvider({ children }) {
   };
 
   const resetProgress = () => {
-    setCompanyName('');
-    setCurrentStep(0);
-    setStepData({});
+    if (window.confirm('Are you sure you want to start over? All progress will be lost.')) {
+      setCompanyName('');
+      setCurrentStep(0);
+      setStepData({});
+    }
   };
 
-  const updateStepData = (stepId, data) => {
+  const updateStepData = (stepKey, data) => {
     setStepData(prev => ({
       ...prev,
-      [stepId]: data
+      [stepKey]: {
+        ...data,
+        lastUpdated: new Date().toISOString()
+      }
     }));
   };
 
