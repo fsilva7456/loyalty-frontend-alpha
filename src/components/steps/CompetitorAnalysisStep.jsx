@@ -12,7 +12,7 @@ export default function CompetitorAnalysisStep() {
   const [error, setError] = useState(null);
 
   const currentAnalysis = stepData?.competitor?.analysis || null;
-  const competitors = stepData?.competitor?.structured_data?.competitors || [];
+  const competitors = stepData?.competitor?.structured_data?.top_competitors || [];
 
   const generateAnalysis = async (userFeedback = null) => {
     setLoading(true);
@@ -27,13 +27,9 @@ export default function CompetitorAnalysisStep() {
       );
       console.log('API Response:', response);
 
-      if (response.error) {
-        throw new Error(response.error);
-      }
-
       updateStepData('competitor', {
-        analysis: response.content || response.generated_output,
-        structured_data: response.structured_data || {},
+        analysis: response.generated_output,
+        structured_data: response.structured_data,
         lastUpdated: new Date().toISOString()
       });
 
@@ -98,11 +94,10 @@ export default function CompetitorAnalysisStep() {
                 {competitors.map((competitor, index) => (
                   <div key={index} className="data-card competitor-card">
                     <h4>{competitor.name}</h4>
-                    <p><strong>Program Type:</strong> {competitor.program_type}</p>
                     
-                    <h5>Key Features</h5>
-                    <ul>
-                      {competitor.key_features.map((feature, idx) => (
+                    <h5>Loyalty Program Features</h5>
+                    <ul className="features">
+                      {competitor.loyalty_program_features.map((feature, idx) => (
                         <li key={idx}>{feature}</li>
                       ))}
                     </ul>
