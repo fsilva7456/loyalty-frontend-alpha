@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useGlobal } from '../../context/GlobalContext';
+import FeedbackModal from '../FeedbackModal';
 
 export default function CompetitorAnalysisStep() {
   const { companyName, stepData, updateStepData } = useGlobal();
@@ -9,6 +10,7 @@ export default function CompetitorAnalysisStep() {
   const [error, setError] = useState(null);
 
   const currentAnalysis = stepData?.competitor?.analysis || null;
+  const competitors = stepData?.competitor?.structured_data?.competitors || [];
 
   const generateAnalysis = async (userFeedback = null) => {
     setLoading(true);
@@ -18,17 +20,36 @@ export default function CompetitorAnalysisStep() {
       // Mock API call for now
       const response = await new Promise(resolve => setTimeout(() => {
         resolve({
-          analysis: `Competitor Analysis for ${companyName}:\n\n` +
+          generated_output: `Competitor Analysis for ${companyName}:\n\n` +
             (userFeedback ? `[Regenerated based on feedback: ${userFeedback}]\n\n` : '') +
             '1. Market Position\n' +
             '2. Competitor Programs\n' +
             '3. Key Differentiators\n' +
-            '4. Opportunities'
+            '4. Opportunities',
+          structured_data: {
+            competitors: [
+              {
+                name: 'Competitor A',
+                program_type: 'Points-based',
+                key_features: ['Feature 1', 'Feature 2'],
+                strengths: ['Strength 1', 'Strength 2'],
+                weaknesses: ['Weakness 1', 'Weakness 2']
+              },
+              {
+                name: 'Competitor B',
+                program_type: 'Tiered',
+                key_features: ['Feature 1', 'Feature 2'],
+                strengths: ['Strength 1', 'Strength 2'],
+                weaknesses: ['Weakness 1', 'Weakness 2']
+              }
+            ]
+          }
         });
       }, 1500));
 
       updateStepData('competitor', {
-        analysis: response.analysis,
+        analysis: response.generated_output,
+        structured_data: response.structured_data,
         lastUpdated: new Date().toISOString()
       });
     } catch (err) {
@@ -40,35 +61,27 @@ export default function CompetitorAnalysisStep() {
     }
   };
 
-  const handleRegenerate = () => {
-    setShowFeedback(true);
-  };
-
   const handleFeedbackSubmit = () => {
     if (feedback.trim()) {
       generateAnalysis(feedback);
     }
   };
 
-  const handleInitialGenerate = () => {
-    generateAnalysis();
-  };
-
   return (
     <div className="step-content-container">
       {error && (
-        <div className="error-message">
-          {error}
-        </div>
+        <div className="error-message">{error}</div>
       )}
 
       {!currentAnalysis && !loading && (
-        <button 
-          onClick={handleInitialGenerate}
-          className="primary-button"
-        >
-          Generate Competitor Analysis
-        </button>
+        <div className="initial-state">
+          <button 
+            onClick={() => generateAnalysis()}
+            className="primary-button"
+          >
+            Generate Competitor Analysis
+          </button>
+        </div>
       )}
 
       {loading && (
@@ -83,38 +96,57 @@ export default function CompetitorAnalysisStep() {
             {currentAnalysis}
           </pre>
           
-          {showFeedback ? (
-            <div className="feedback-container">
-              <textarea
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="What would you like to change or improve?"
-                className="feedback-input"
-              />
-              <div className="feedback-actions">
-                <button 
-                  onClick={() => setShowFeedback(false)}
-                  className="secondary-button"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={handleFeedbackSubmit}
-                  className="primary-button"
-                  disabled={!feedback.trim()}
-                >
-                  Submit Feedback
-                </button>
+          {competitors.length > 0 && (
+            <div className="structured-data">
+              <h3>Competitive Landscape</h3>
+              <div className="data-grid">
+                {competitors.map((competitor, index) => (
+                  <div key={index} className="data-card competitor-card">
+                    <h4>{competitor.name}</h4>
+                    <p><strong>Program Type:</strong> {competitor.program_type}</p>
+                    
+                    <h5>Key Features</h5>
+                    <ul>
+                      {competitor.key_features.map((feature, idx) => (
+                        <li key={idx}>{feature}</li>
+                      ))}
+                    </ul>
+                    
+                    <h5>Strengths</h5>
+                    <ul className="strengths">
+                      {competitor.strengths.map((strength, idx) => (
+                        <li key={idx}>{strength}</li>
+                      ))}
+                    </ul>
+                    
+                    <h5>Weaknesses</h5>
+                    <ul className="weaknesses">
+                      {competitor.weaknesses.map((weakness, idx) => (
+                        <li key={idx}>{weakness}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
             </div>
-          ) : (
+          )}
+          
+          <div className="button-container">
             <button 
-              onClick={handleRegenerate}
+              onClick={() => setShowFeedback(true)}
               className="secondary-button"
             >
               Regenerate Analysis
             </button>
-          )}
+          </div>
+
+          <FeedbackModal
+            isOpen={showFeedback}
+            onClose={() => setShowFeedback(false)}
+            feedback={feedback}
+            onFeedbackChange={(e) => setFeedback(e.target.value)}
+            onSubmit={handleFeedbackSubmit}
+          />
         </div>
       )}
     </div>
