@@ -1,5 +1,10 @@
+import { proxyUrl } from '../config/proxy';
+
 export async function generateCompetitorAnalysis(companyName, existingOutput = null, userFeedback = null) {
-  const response = await fetch(`${import.meta.env.VITE_COMPETITOR_API_URL}/generate`, {
+  const apiUrl = `${import.meta.env.VITE_COMPETITOR_API_URL}/generate`;
+  const proxiedUrl = proxyUrl(apiUrl);
+
+  const response = await fetch(proxiedUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
