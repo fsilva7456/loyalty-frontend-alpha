@@ -1,63 +1,80 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGlobal } from '../../context/GlobalContext';
+import { useAPICall } from '../../hooks/useAPICall';
 import FeedbackModal from '../FeedbackModal';
+import ErrorDisplay from '../ErrorDisplay';
 
 export default function CompetitorAnalysisStep() {
+  const navigate = useNavigate();
   const { companyName, stepData, updateStepData } = useGlobal();
-  const [loading, setLoading] = useState(false);
+  const { loading, error, executeCall, clearError } = useAPICall();
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
-  const [error, setError] = useState(null);
+
+  // Redirect if company name is missing
+  useEffect(() => {
+    if (!companyName) {
+      navigate('/');
+    }
+  }, [companyName, navigate]);
 
   const currentAnalysis = stepData?.competitor?.analysis || null;
   const competitors = stepData?.competitor?.structured_data?.competitors || [];
 
   const generateAnalysis = async (userFeedback = null) => {
-    setLoading(true);
-    setError(null);
-    
     try {
-      // Mock API call for now
-      const response = await new Promise(resolve => setTimeout(() => {
-        resolve({
-          generated_output: `Competitor Analysis for ${companyName}:\n\n` +
-            (userFeedback ? `[Regenerated based on feedback: ${userFeedback}]\n\n` : '') +
-            '1. Market Position\n' +
-            '2. Competitor Programs\n' +
-            '3. Key Differentiators\n' +
-            '4. Opportunities',
-          structured_data: {
-            competitors: [
-              {
-                name: 'Competitor A',
-                program_type: 'Points-based',
-                key_features: ['Feature 1', 'Feature 2'],
-                strengths: ['Strength 1', 'Strength 2'],
-                weaknesses: ['Weakness 1', 'Weakness 2']
-              },
-              {
-                name: 'Competitor B',
-                program_type: 'Tiered',
-                key_features: ['Feature 1', 'Feature 2'],
-                strengths: ['Strength 1', 'Strength 2'],
-                weaknesses: ['Weakness 1', 'Weakness 2']
-              }
-            ]
+      const response = await executeCall(async () => {
+        // Mock API call
+        const result = await new Promise((resolve, reject) => {
+          // Simulate random failure for testing
+          if (Math.random() < 0.2) {
+            reject(new Error('Failed to connect to the analysis service'));
           }
+
+          setTimeout(() => {
+            resolve({
+              generated_output: `Competitor Analysis for ${companyName}:\n\n` +
+                (userFeedback ? `[Regenerated based on feedback: ${userFeedback}]\n\n` : '') +
+                '1. Market Position\n' +
+                '2. Competitor Programs\n' +
+                '3. Key Differentiators\n' +
+                '4. Opportunities',
+              structured_data: {
+                competitors: [
+                  {
+                    name: 'Competitor A',
+                    program_type: 'Points-based',
+                    key_features: ['Feature 1', 'Feature 2'],
+                    strengths: ['Strength 1', 'Strength 2'],
+                    weaknesses: ['Weakness 1', 'Weakness 2']
+                  },
+                  {
+                    name: 'Competitor B',
+                    program_type: 'Tiered',
+                    key_features: ['Feature 1', 'Feature 2'],
+                    strengths: ['Strength 1', 'Strength 2'],
+                    weaknesses: ['Weakness 1', 'Weakness 2']
+                  }
+                ]
+              }
+            });
+          }, 1500);
         });
-      }, 1500));
+
+        return result;
+      });
 
       updateStepData('competitor', {
         analysis: response.generated_output,
         structured_data: response.structured_data,
         lastUpdated: new Date().toISOString()
       });
-    } catch (err) {
-      setError('Failed to generate analysis. Please try again.');
-    } finally {
-      setLoading(false);
+
       setShowFeedback(false);
       setFeedback('');
+    } catch (err) {
+      // Error is handled by useAPICall
     }
   };
 
@@ -69,9 +86,11 @@ export default function CompetitorAnalysisStep() {
 
   return (
     <div className="step-content-container">
-      {error && (
-        <div className="error-message">{error}</div>
-      )}
+      <ErrorDisplay
+        error={error}
+        onRetry={() => generateAnalysis()}
+        onDismiss={clearError}
+      />
 
       {!currentAnalysis && !loading && (
         <div className="initial-state">
