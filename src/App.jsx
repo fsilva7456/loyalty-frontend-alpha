@@ -1,6 +1,7 @@
 import { useGlobal, GlobalProvider } from './context/GlobalContext';
 import Welcome from './components/Welcome';
 import StepScreen from './components/StepScreen';
+import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 
 function MainContent() {
@@ -10,10 +11,12 @@ function MainContent() {
 
 export default function App() {
   return (
-    <GlobalProvider>
-      <div className="app-container">
-        <MainContent />
-      </div>
-    </GlobalProvider>
+    <ErrorBoundary>
+      <GlobalProvider>
+        <div className="app-container">
+          <MainContent />
+        </div>
+      </GlobalProvider>
+    </ErrorBoundary>
   );
 }
