@@ -11,6 +11,12 @@ export default function Welcome() {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && inputCompanyName.trim()) {
+      handleStart();
+    }
+  };
+
   return (
     <div className="welcome-container">
       <h1>Loyalty Program Builder</h1>
@@ -19,8 +25,10 @@ export default function Welcome() {
           type="text"
           value={inputCompanyName}
           onChange={(e) => setInputCompanyName(e.target.value)}
+          onKeyPress={handleKeyPress}
           placeholder="Enter company name"
           className="company-input"
+          autoFocus
         />
         <button 
           onClick={handleStart}
