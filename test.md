@@ -1,1 +1,1 @@
-This is a test file to confirm write access to the repository.
+VGhpcyBpcyBhIHRlc3QgZmlsZSB0byBjb25maXJtIHdyaXRlIGFjY2VzcyB0byB0aGUgcmVwb3NpdG9yeS4=
