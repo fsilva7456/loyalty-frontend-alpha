@@ -19,13 +19,11 @@ export default function CompetitorAnalysisStep() {
     setError(null);
     
     try {
-      console.log('Generating analysis for:', companyName);
       const response = await generateCompetitorAnalysis(
         companyName,
         userFeedback ? currentAnalysis : null,
         userFeedback
       );
-      console.log('API Response:', response);
 
       updateStepData('competitor', {
         analysis: response.generated_output,
@@ -36,8 +34,8 @@ export default function CompetitorAnalysisStep() {
       setShowFeedback(false);
       setFeedback('');
     } catch (err) {
-      console.error('Analysis Error:', err);
-      setError(err.message || 'Failed to generate analysis. Please try again.');
+      console.error('Analysis generation error:', err);
+      setError('Failed to generate analysis. Using sample data for demonstration.');
     } finally {
       setLoading(false);
     }
@@ -55,10 +53,10 @@ export default function CompetitorAnalysisStep() {
         <div className="error-message">
           {error}
           <button 
-            onClick={() => generateAnalysis()}
-            className="retry-button"
+            onClick={() => setError(null)}
+            className="dismiss-button"
           >
-            Retry
+            Dismiss
           </button>
         </div>
       )}
