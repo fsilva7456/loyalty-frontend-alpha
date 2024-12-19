@@ -1,16 +1,15 @@
 import { createContext, useContext, useState } from 'react';
-import { StepKeys } from './types';
 
 const GlobalContext = createContext(undefined);
 
 export const STEPS = [
-  { id: 1, title: 'Competitor Analysis', key: StepKeys.COMPETITOR },
-  { id: 2, title: 'Customer Analysis', key: StepKeys.CUSTOMER },
-  { id: 3, title: 'Loyalty & CRM Objectives', key: StepKeys.LOYALTY_CRM },
-  { id: 4, title: 'Loyalty Program Design', key: StepKeys.PROGRAM_DESIGN },
-  { id: 5, title: 'Financial Model', key: StepKeys.FINANCIAL },
-  { id: 6, title: 'Roadmap', key: StepKeys.ROADMAP },
-  { id: 7, title: 'Business Case', key: StepKeys.BUSINESS_CASE },
+  { id: 1, title: 'Competitor Analysis', key: 'competitor' },
+  { id: 2, title: 'Customer Analysis', key: 'customer' },
+  { id: 3, title: 'Loyalty & CRM Objectives', key: 'objectives' },
+  { id: 4, title: 'Loyalty Program Design', key: 'design' },
+  { id: 5, title: 'Financial Model', key: 'financial' },
+  { id: 6, title: 'Roadmap', key: 'roadmap' },
+  { id: 7, title: 'Business Case', key: 'business' },
 ];
 
 export function GlobalProvider({ children }) {
@@ -19,6 +18,7 @@ export function GlobalProvider({ children }) {
   const [stepData, setStepData] = useState({});
 
   const startAnalysis = (name) => {
+    console.log('Starting analysis for:', name);
     setCompanyName(name);
     setCurrentStep(1);
   };
@@ -44,6 +44,7 @@ export function GlobalProvider({ children }) {
   };
 
   const updateStepData = (stepKey, data) => {
+    console.log('Updating step data:', stepKey, data);
     setStepData(prev => ({
       ...prev,
       [stepKey]: {
@@ -53,17 +54,19 @@ export function GlobalProvider({ children }) {
     }));
   };
 
+  const value = {
+    companyName,
+    currentStep,
+    stepData,
+    startAnalysis,
+    nextStep,
+    previousStep,
+    resetProgress,
+    updateStepData
+  };
+
   return (
-    <GlobalContext.Provider value={{
-      companyName,
-      currentStep,
-      stepData,
-      startAnalysis,
-      nextStep,
-      previousStep,
-      resetProgress,
-      updateStepData
-    }}>
+    <GlobalContext.Provider value={value}>
       {children}
     </GlobalContext.Provider>
   );

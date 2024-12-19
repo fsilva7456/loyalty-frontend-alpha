@@ -1,17 +1,13 @@
-import { useGlobal, GlobalProvider } from './context/GlobalContext';
-import Welcome from './components/Welcome';
+import { GlobalProvider } from './context/GlobalContext';
+import MainContent from './components/MainContent';
 import './App.css';
 
-function App() {
-  const { companyName } = useGlobal();
-
+export default function App() {
   return (
     <GlobalProvider>
       <div className="app-container">
-        <Welcome />
+        <MainContent />
       </div>
     </GlobalProvider>
   );
 }
-
-export default App;
