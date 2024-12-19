@@ -1,95 +1,130 @@
-/* Add to existing App.css */
-
-/* Error Handling */
-.error-container {
-  background-color: #fff3f3;
-  border: 1px solid #ffcdd2;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.error-content {
+/* Layout */
+.step-screen {
+  min-height: 100vh;
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
-.error-icon {
-  background-color: #dc3545;
-  color: white;
-  width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  flex-shrink: 0;
-}
-
-.error-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 1rem;
-}
-
-/* Tooltip */
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip-trigger {
-  cursor: help;
-}
-
-.tooltip-content {
-  position: absolute;
-  right: 0;
-  top: 100%;
-  margin-top: 0.5rem;
+  flex-direction: column;
   background-color: white;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  padding: 1rem;
-  box-shadow: var(--shadow);
-  width: 250px;
-  z-index: 100;
 }
 
-.help-button {
+/* Top Bar */
+.top-bar {
+  background-color: white;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.step-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.company-name {
+  color: var(--text-light);
+  font-size: 0.875rem;
+}
+
+.step-info {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+/* Progress Bar */
+.progress-container {
+  padding: 0.5rem 0;
+}
+
+.progress-bar {
+  height: 4px;
+  background-color: var(--background-light);
+  border-radius: 2px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-step {
   width: 24px;
   height: 24px;
   border-radius: 12px;
   background-color: var(--background-light);
-  border: 1px solid var(--border-color);
   color: var(--text-light);
-  font-size: 0.875rem;
-  cursor: help;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.75rem;
+  transition: all 0.3s;
 }
 
-.modal-header {
+.progress-step.completed {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Content Area */
+.step-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.step-content-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Navigation Bar */
+.navigation-bar {
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
+  background-color: var(--background-light);
+  border-top: 1px solid var(--border-color);
+}
+
+.nav-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-button.primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.nav-button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  color: white;
+}
+
+.nav-button:disabled {
+  background-color: var(--background-light);
+  cursor: not-allowed;
+}
+
+/* Placeholder */
+.step-placeholder {
+  display: flex;
   align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.feedback-tips {
-  font-size: 0.875rem;
-}
-
-.feedback-tips ul {
-  margin: 0.5rem 0 0 0;
-  padding-left: 1.25rem;
-}
-
-.feedback-tips li {
-  margin-bottom: 0.25rem;
+  justify-content: center;
+  min-height: 300px;
   color: var(--text-light);
 }

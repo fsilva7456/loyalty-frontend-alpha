@@ -1,7 +1,6 @@
 import { useGlobal, STEPS } from '../context/GlobalContext';
-import ProgressBar from './ProgressBar';
 import CompetitorAnalysisStep from './steps/CompetitorAnalysisStep';
-import CustomerAnalysisStep from './steps/CustomerAnalysisStep';
+import ProgressBar from './ProgressBar';
 
 export default function StepScreen() {
   const { currentStep, nextStep, previousStep, companyName, resetProgress } = useGlobal();
@@ -11,22 +10,12 @@ export default function StepScreen() {
     switch (currentStep) {
       case 1:
         return <CompetitorAnalysisStep />;
-      case 2:
-        return <CustomerAnalysisStep />;
       default:
         return (
           <div className="step-placeholder">
             <p>Content for {currentStepData.title} will go here</p>
           </div>
         );
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep === 1) {
-      resetProgress();
-    } else {
-      previousStep();
     }
   };
 
@@ -41,12 +30,14 @@ export default function StepScreen() {
         </div>
         <ProgressBar />
       </div>
+
       <div className="step-content">
         {renderStepContent()}
       </div>
+
       <div className="navigation-bar">
         <button 
-          onClick={handleBack}
+          onClick={() => currentStep === 1 ? resetProgress() : previousStep()}
           className="nav-button"
         >
           {currentStep === 1 ? 'Change Company' : 'Previous'}
