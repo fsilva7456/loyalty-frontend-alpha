@@ -1,9 +1,14 @@
-import { Buffer } from 'buffer';
+// Helper function to encode string as base64
+function encodeBase64(str) {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
+    function toSolidBytes(match, p1) {
+      return String.fromCharCode('0x' + p1);
+    }));
+}
 
 export async function generateCompetitorAnalysis(companyName, existingOutput = null, userFeedback = null) {
   const apiUrl = 'https://loyalty-competitor-analysis-production.up.railway.app/generate';
   
-  // Method 1: Using JSON-P like approach with iframe
   const makeRequest = async () => {
     try {
       // Prepare the request body
@@ -19,7 +24,7 @@ export async function generateCompetitorAnalysis(companyName, existingOutput = n
         other_input_data: {}
       };
 
-      // First try using plain fetch
+      // First try direct POST request
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -27,6 +32,7 @@ export async function generateCompetitorAnalysis(companyName, existingOutput = n
           'Accept': 'application/json',
           'Origin': window.location.origin
         },
+        credentials: 'omit',
         mode: 'cors',
         body: JSON.stringify(requestBody)
       });
@@ -37,16 +43,20 @@ export async function generateCompetitorAnalysis(companyName, existingOutput = n
 
       return response.json();
     } catch (error) {
-      console.log('Primary request failed, trying alternative method...');
+      console.log('Primary request failed, trying GET request...');
       
-      // Fallback: Try with base64 encoded parameters in URL
-      const encodedParams = Buffer.from(JSON.stringify(requestBody)).toString('base64');
-      const response = await fetch(`${apiUrl}?data=${encodedParams}`, {
+      // Try alternate request method
+      const encodedData = encodeBase64(JSON.stringify(requestBody));
+      const getUrl = `${apiUrl}?data=${encodedData}`;
+      
+      const response = await fetch(getUrl, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
           'X-Requested-With': 'XMLHttpRequest'
-        }
+        },
+        credentials: 'omit',
+        mode: 'cors'
       });
 
       if (!response.ok) {
@@ -64,7 +74,7 @@ export async function generateCompetitorAnalysis(companyName, existingOutput = n
     return data;
   } catch (err) {
     console.error('API Error:', err);
-    // Return mock data for development/testing
+    // Return mock data for demonstration
     return {
       generated_output: `Mock analysis for ${companyName}:\n\n` +
         '1. Market Position\n' +
