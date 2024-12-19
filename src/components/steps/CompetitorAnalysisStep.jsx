@@ -19,21 +19,28 @@ export default function CompetitorAnalysisStep() {
     setError(null);
     
     try {
+      console.log('Generating analysis for:', companyName);
       const response = await generateCompetitorAnalysis(
         companyName,
         userFeedback ? currentAnalysis : null,
         userFeedback
       );
+      console.log('API Response:', response);
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
 
       updateStepData('competitor', {
-        analysis: response.generated_output,
-        structured_data: response.structured_data,
+        analysis: response.content || response.generated_output,
+        structured_data: response.structured_data || {},
         lastUpdated: new Date().toISOString()
       });
 
       setShowFeedback(false);
       setFeedback('');
     } catch (err) {
+      console.error('Analysis Error:', err);
       setError(err.message || 'Failed to generate analysis. Please try again.');
     } finally {
       setLoading(false);
