@@ -1,7 +1,22 @@
-const API_BASE_URL = 'https://loyalty-competitor-analysis-production.up.railway.app';
+// Ensure all env variables are defined
+const requiredEnvVars = [
+  'VITE_COMPETITOR_API_URL',
+  'VITE_CUSTOMER_API_URL',
+  'VITE_OBJECTIVES_API_URL',
+  'VITE_PROGRAM_DESIGN_API_URL',
+  'VITE_FINANCIAL_API_URL',
+  'VITE_ROADMAP_API_URL',
+  'VITE_BUSINESS_CASE_API_URL'
+];
+
+requiredEnvVars.forEach(varName => {
+  if (!import.meta.env[varName]) {
+    console.warn(`Missing environment variable: ${varName}`);
+  }
+});
 
 export async function generateCompetitorAnalysis(companyName, existingOutput = null, userFeedback = null) {
-  const response = await fetch(`${API_BASE_URL}/generate`, {
+  const response = await fetch(`${import.meta.env.VITE_COMPETITOR_API_URL}/generate`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
