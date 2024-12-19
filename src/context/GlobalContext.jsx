@@ -3,18 +3,18 @@ import { createContext, useContext, useState } from 'react';
 const GlobalContext = createContext(undefined);
 
 export const STEPS = [
-  { id: 1, title: 'Competitor Analysis' },
-  { id: 2, title: 'Customer Analysis' },
-  { id: 3, title: 'Program Design' },
-  { id: 4, title: 'Financial Model' },
-  { id: 5, title: 'Implementation Roadmap' },
-  { id: 6, title: 'Business Case' },
-  { id: 7, title: 'Executive Summary' },
+  { id: 1, title: 'Competitor Analysis', key: 'competitor' },
+  { id: 2, title: 'Customer Analysis', key: 'customer' },
+  { id: 3, title: 'Loyalty & CRM Objectives', key: 'objectives' },
+  { id: 4, title: 'Loyalty Program Design', key: 'design' },
+  { id: 5, title: 'Financial Model', key: 'financial' },
+  { id: 6, title: 'Roadmap', key: 'roadmap' },
+  { id: 7, title: 'Business Case', key: 'business' },
 ];
 
 export function GlobalProvider({ children }) {
   const [companyName, setCompanyName] = useState('');
-  const [currentStep, setCurrentStep] = useState(0); // 0 means not started
+  const [currentStep, setCurrentStep] = useState(0);
   const [stepData, setStepData] = useState({});
 
   const startAnalysis = (name) => {
@@ -26,6 +26,18 @@ export function GlobalProvider({ children }) {
     if (currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1);
     }
+  };
+
+  const previousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const resetProgress = () => {
+    setCompanyName('');
+    setCurrentStep(0);
+    setStepData({});
   };
 
   const updateStepData = (stepId, data) => {
@@ -42,6 +54,8 @@ export function GlobalProvider({ children }) {
       stepData,
       startAnalysis,
       nextStep,
+      previousStep,
+      resetProgress,
       updateStepData
     }}>
       {children}
