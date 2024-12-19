@@ -6,13 +6,12 @@ import FeedbackModal from '../FeedbackModal';
 import ErrorDisplay from '../ErrorDisplay';
 
 export default function CompetitorAnalysisStep() {
-  const navigate = useNavigate();
   const { companyName, stepData, updateStepData } = useGlobal();
   const { loading, error, executeCall, clearError } = useAPICall();
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
+  const navigate = useNavigate();
 
-  // Redirect if company name is missing
   useEffect(() => {
     if (!companyName) {
       navigate('/');
@@ -27,11 +26,6 @@ export default function CompetitorAnalysisStep() {
       const response = await executeCall(async () => {
         // Mock API call
         const result = await new Promise((resolve, reject) => {
-          // Simulate random failure for testing
-          if (Math.random() < 0.2) {
-            reject(new Error('Failed to connect to the analysis service'));
-          }
-
           setTimeout(() => {
             resolve({
               generated_output: `Competitor Analysis for ${companyName}:\n\n` +
