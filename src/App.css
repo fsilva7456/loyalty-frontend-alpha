@@ -2,30 +2,20 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 2rem;
 }
 
-.app-header {
-  margin-bottom: 2rem;
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 4rem;
 }
 
-.app-header h1 {
-  color: #333;
-  font-size: 2.5rem;
-  text-align: center;
-}
-
-.app-main {
-  width: 100%;
-  max-width: 600px;
-}
-
-.input-container {
+.input-group {
   display: flex;
   gap: 1rem;
-  justify-content: center;
-  margin-top: 2rem;
 }
 
 .company-input {
@@ -36,7 +26,8 @@
   width: 300px;
 }
 
-.start-button {
+.start-button,
+.next-button {
   padding: 0.5rem 1.5rem;
   font-size: 1rem;
   background-color: #0066cc;
@@ -44,13 +35,56 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.start-button:hover {
+.start-button:disabled,
+.next-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.start-button:hover:not(:disabled),
+.next-button:hover:not(:disabled) {
   background-color: #0052a3;
 }
 
-.start-button:active {
-  background-color: #004080;
+.step-screen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: -2rem;
+}
+
+.top-bar {
+  background-color: #f5f5f5;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.step-content {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+.navigation-bar {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  background-color: #f5f5f5;
+  border-top: 1px solid #ddd;
+}
+
+.step-info {
+  font-weight: 500;
+}
+
+.company-name {
+  color: #666;
 }
