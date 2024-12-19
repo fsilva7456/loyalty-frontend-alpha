@@ -1,74 +1,73 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useGlobal } from '../../context/GlobalContext';
-import { useAPICall } from '../../hooks/useAPICall';
 import FeedbackModal from '../FeedbackModal';
 import ErrorDisplay from '../ErrorDisplay';
 
 export default function CompetitorAnalysisStep() {
   const { companyName, stepData, updateStepData } = useGlobal();
-  const { loading, error, executeCall, clearError } = useAPICall();
+  const [loading, setLoading] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedback, setFeedback] = useState('');
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!companyName) {
-      navigate('/');
-    }
-  }, [companyName, navigate]);
+  const [error, setError] = useState(null);
 
   const currentAnalysis = stepData?.competitor?.analysis || null;
   const competitors = stepData?.competitor?.structured_data?.competitors || [];
 
   const generateAnalysis = async (userFeedback = null) => {
+    setLoading(true);
+    setError(null);
+    
     try {
-      const response = await executeCall(async () => {
-        // Mock API call
-        const result = await new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve({
-              generated_output: `Competitor Analysis for ${companyName}:\n\n` +
-                (userFeedback ? `[Regenerated based on feedback: ${userFeedback}]\n\n` : '') +
-                '1. Market Position\n' +
-                '2. Competitor Programs\n' +
-                '3. Key Differentiators\n' +
-                '4. Opportunities',
-              structured_data: {
-                competitors: [
-                  {
-                    name: 'Competitor A',
-                    program_type: 'Points-based',
-                    key_features: ['Feature 1', 'Feature 2'],
-                    strengths: ['Strength 1', 'Strength 2'],
-                    weaknesses: ['Weakness 1', 'Weakness 2']
-                  },
-                  {
-                    name: 'Competitor B',
-                    program_type: 'Tiered',
-                    key_features: ['Feature 1', 'Feature 2'],
-                    strengths: ['Strength 1', 'Strength 2'],
-                    weaknesses: ['Weakness 1', 'Weakness 2']
-                  }
-                ]
-              }
-            });
-          }, 1500);
-        });
+      // Simulate API call with mock data
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
-        return result;
-      });
+      const mockResponse = {
+        generated_output: `Competitor Analysis for ${companyName}:\n\n` +
+          (userFeedback ? `[Regenerated based on feedback: ${userFeedback}]\n\n` : '') +
+          '1. Market Position\n' +
+          '- Industry leader in retail sector\n' +
+          '- Strong presence in urban markets\n\n' +
+          '2. Competitor Programs\n' +
+          '- Various loyalty initiatives in market\n' +
+          '- Mix of points and tier-based systems\n\n' +
+          '3. Key Differentiators\n' +
+          '- Technology integration\n' +
+          '- Customer service focus\n\n' +
+          '4. Opportunities\n' +
+          '- Digital expansion\n' +
+          '- Personalization potential',
+        structured_data: {
+          competitors: [
+            {
+              name: 'Competitor A',
+              program_type: 'Points-based',
+              key_features: ['Mobile app integration', 'Instant rewards'],
+              strengths: ['Wide market reach', 'Strong brand recognition'],
+              weaknesses: ['Limited personalization', 'Complex redemption process']
+            },
+            {
+              name: 'Competitor B',
+              program_type: 'Tiered',
+              key_features: ['VIP benefits', 'Partner network'],
+              strengths: ['Premium customer base', 'High engagement rates'],
+              weaknesses: ['High maintenance costs', 'Limited accessibility']
+            }
+          ]
+        }
+      };
 
       updateStepData('competitor', {
-        analysis: response.generated_output,
-        structured_data: response.structured_data,
+        analysis: mockResponse.generated_output,
+        structured_data: mockResponse.structured_data,
         lastUpdated: new Date().toISOString()
       });
 
       setShowFeedback(false);
       setFeedback('');
     } catch (err) {
-      // Error is handled by useAPICall
+      setError('Failed to generate analysis. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,11 +79,17 @@ export default function CompetitorAnalysisStep() {
 
   return (
     <div className="step-content-container">
-      <ErrorDisplay
-        error={error}
-        onRetry={() => generateAnalysis()}
-        onDismiss={clearError}
-      />
+      {error && (
+        <div className="error-message">
+          {error}
+          <button 
+            onClick={() => generateAnalysis()}
+            className="retry-button"
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       {!currentAnalysis && !loading && (
         <div className="initial-state">
@@ -99,6 +104,7 @@ export default function CompetitorAnalysisStep() {
 
       {loading && (
         <div className="loading-indicator">
+          <div className="loading-spinner"></div>
           Generating analysis...
         </div>
       )}
