@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useGlobal } from '../../context/GlobalContext';
+import { generateCompetitorAnalysis } from '../../services/api';
 import FeedbackModal from '../FeedbackModal';
 import ErrorDisplay from '../ErrorDisplay';
 
@@ -18,54 +19,22 @@ export default function CompetitorAnalysisStep() {
     setError(null);
     
     try {
-      // Simulate API call with mock data
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      const mockResponse = {
-        generated_output: `Competitor Analysis for ${companyName}:\n\n` +
-          (userFeedback ? `[Regenerated based on feedback: ${userFeedback}]\n\n` : '') +
-          '1. Market Position\n' +
-          '- Industry leader in retail sector\n' +
-          '- Strong presence in urban markets\n\n' +
-          '2. Competitor Programs\n' +
-          '- Various loyalty initiatives in market\n' +
-          '- Mix of points and tier-based systems\n\n' +
-          '3. Key Differentiators\n' +
-          '- Technology integration\n' +
-          '- Customer service focus\n\n' +
-          '4. Opportunities\n' +
-          '- Digital expansion\n' +
-          '- Personalization potential',
-        structured_data: {
-          competitors: [
-            {
-              name: 'Competitor A',
-              program_type: 'Points-based',
-              key_features: ['Mobile app integration', 'Instant rewards'],
-              strengths: ['Wide market reach', 'Strong brand recognition'],
-              weaknesses: ['Limited personalization', 'Complex redemption process']
-            },
-            {
-              name: 'Competitor B',
-              program_type: 'Tiered',
-              key_features: ['VIP benefits', 'Partner network'],
-              strengths: ['Premium customer base', 'High engagement rates'],
-              weaknesses: ['High maintenance costs', 'Limited accessibility']
-            }
-          ]
-        }
-      };
+      const response = await generateCompetitorAnalysis(
+        companyName,
+        userFeedback ? currentAnalysis : null,
+        userFeedback
+      );
 
       updateStepData('competitor', {
-        analysis: mockResponse.generated_output,
-        structured_data: mockResponse.structured_data,
+        analysis: response.generated_output,
+        structured_data: response.structured_data,
         lastUpdated: new Date().toISOString()
       });
 
       setShowFeedback(false);
       setFeedback('');
     } catch (err) {
-      setError('Failed to generate analysis. Please try again.');
+      setError(err.message || 'Failed to generate analysis. Please try again.');
     } finally {
       setLoading(false);
     }
